@@ -1,0 +1,16 @@
+// Licensed under the Apache License, Version 2.0
+// Copyright 2025, Mindful Software LLC, All rights reserved.
+
+import 'dart:async';
+
+const _key = #dartastic_otel_libs_google_mobile_ads_suppress;
+
+bool googleMobileAdsInstrumentationSuppressed() => Zone.current[_key] == true;
+
+T runWithoutGoogleMobileAdsInstrumentation<T>(T Function() body) =>
+    runZoned(body, zoneValues: {_key: true});
+
+Future<T> runWithoutGoogleMobileAdsInstrumentationAsync<T>(
+  Future<T> Function() body,
+) =>
+    runZoned(body, zoneValues: {_key: true});
