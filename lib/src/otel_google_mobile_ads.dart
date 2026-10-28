@@ -1,15 +1,16 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the Apache License, Version 2.0
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_google_mobile_ads_suppression.dart';
 
 const _tracerName = 'dartastic_otel_libs_google_mobile_ads';
 
-Tracer _tracer() => OTel.tracerProvider().getTracer(_tracerName);
+APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 class GoogleMobileAdsResult {
+  /// Creates a result.
   const GoogleMobileAdsResult({
     this.appId,
     this.adUnitId,
@@ -80,8 +81,13 @@ class GoogleMobileAdsResult {
   final int? statusCode;
 }
 
+/// What a traced call returned: the value for the caller plus fields
+/// recorded on the span.
 class GoogleMobileAdsCallResult<T> {
+  /// Creates a call result.
   const GoogleMobileAdsCallResult({required this.value, this.result});
+
+  /// The value returned to the caller.
   final T value;
   final GoogleMobileAdsResult? result;
 }
@@ -109,44 +115,44 @@ Future<T> tracedGoogleMobileAds<T>({
   final span = _tracer().startSpan(
     'google_mobile_ads $operation',
     kind: SpanKind.client,
-    attributes: OTel.attributesFromMap(m),
+    attributes: OTelAPI.attributesFromMap(m),
   );
   try {
     final r = await invoke();
     if (r.result != null) {
       final extras = <Attribute<Object>>[];
       if (r.result!.appId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'google_mobile_ads.app.id',
           r.result!.appId!,
         ));
       }
       if (r.result!.adUnitId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'google_mobile_ads.ad_unit.id',
           r.result!.adUnitId!,
         ));
       }
       if (r.result!.adFormat != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'google_mobile_ads.ad.format',
           r.result!.adFormat!,
         ));
       }
       if (r.result!.mediationAdapter != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'google_mobile_ads.mediation.adapter',
           r.result!.mediationAdapter!,
         ));
       }
       if (r.result!.responseId != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'google_mobile_ads.response.id',
           r.result!.responseId!,
         ));
       }
       if (r.result!.loadStatus != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'google_mobile_ads.load.status',
           r.result!.loadStatus!,
         ));
@@ -158,61 +164,61 @@ Future<T> tracedGoogleMobileAds<T>({
         }
       }
       if (r.result!.errorCode != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'google_mobile_ads.error.code',
           r.result!.errorCode!,
         ));
       }
       if (r.result!.errorDomain != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'google_mobile_ads.error.domain',
           r.result!.errorDomain!,
         ));
       }
       if (r.result!.loadTimeMs != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'google_mobile_ads.load.time_ms',
           r.result!.loadTimeMs!,
         ));
       }
       if (r.result!.estimatedValueMicros != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'google_mobile_ads.value.micros',
           r.result!.estimatedValueMicros!,
         ));
       }
       if (r.result!.precisionType != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'google_mobile_ads.value.precision',
           r.result!.precisionType!,
         ));
       }
       if (r.result!.currencyCode != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'google_mobile_ads.currency.code',
           r.result!.currencyCode!,
         ));
       }
       if (r.result!.rewardType != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'google_mobile_ads.reward.type',
           r.result!.rewardType!,
         ));
       }
       if (r.result!.rewardAmount != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'google_mobile_ads.reward.amount',
           r.result!.rewardAmount!,
         ));
       }
       if (r.result!.viewabilityValid != null) {
-        extras.add(OTel.attributeBool(
+        extras.add(OTelAPI.attributeBool(
           'google_mobile_ads.viewability.valid',
           r.result!.viewabilityValid!,
         ));
       }
       if (r.result!.statusCode != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'http.response.status_code',
           r.result!.statusCode!,
         ));
@@ -223,13 +229,13 @@ Future<T> tracedGoogleMobileAds<T>({
           );
         }
       }
-      if (extras.isNotEmpty) span.addAttributes(OTel.attributes(extras));
+      if (extras.isNotEmpty) span.addAttributes(OTelAPI.attributes(extras));
     }
     return r.value;
   } catch (e, st) {
-    span.addAttributes(OTel.attributes([
-      OTel.attributeString(
-        ErrorResource.errorType.key,
+    span.addAttributes(OTelAPI.attributes([
+      OTelAPI.attributeString(
+        ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
     ]));
